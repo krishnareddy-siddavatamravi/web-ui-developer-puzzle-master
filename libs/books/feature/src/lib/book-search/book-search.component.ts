@@ -26,7 +26,8 @@ export class BookSearchComponent implements OnInit {
   constructor(
     private readonly store: Store,
     private readonly fb: FormBuilder
-  ) {
+  ) 
+  {
     this.searchForm.controls.term.valueChanges
       .pipe(debounceTime(500)) // Debounce input changes for 500ms
       .subscribe(() => {
@@ -54,26 +55,16 @@ export class BookSearchComponent implements OnInit {
     this.store.dispatch(addToReadingList({ book }));
   }
 
-  // searchExample() {
-  //   this.searchForm.controls.term.setValue('javascript');
-  //   this.searchBooks();
-  // }
-
-  // searchBooks() {
-  //   if (this.searchForm.value.term) {
-  //     this.store.dispatch(searchBooks({ term: this.searchTerm }));
-  //   } else {
-  //     this.store.dispatch(clearSearch());
-  //   }
-  // }
   searchBooks() {
     const term = this.searchForm.value.term;
-
-    if (term) {
+    
+    if (term  ) {
       this.store.dispatch(searchBooks({ term }));
     } else {
       this.store.dispatch(clearSearch());
     }
   }
+
+ 
 
 }
