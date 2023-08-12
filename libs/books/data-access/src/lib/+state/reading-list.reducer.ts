@@ -6,7 +6,12 @@ import { ReadingListItem } from '@tmo/shared/models';
 
 export const READING_LIST_FEATURE_KEY = 'readingList';
 
-export interface State extends EntityState<ReadingListItem> {
+	// Define the custom interface that extends EntityState
+  interface CustomEntityState<T> extends EntityState<T> {
+    previousState: EntityState<T> | null;
+  }
+
+export interface State extends CustomEntityState<ReadingListItem> {
   loaded: boolean;
   error: null | string;
 }
@@ -23,7 +28,8 @@ export const readingListAdapter: EntityAdapter<ReadingListItem> = createEntityAd
 
 export const initialState: State = readingListAdapter.getInitialState({
   loaded: false,
-  error: null
+  error: null,
+  previousState: null
 });
 
 const readingListReducer = createReducer(
@@ -47,12 +53,36 @@ const readingListReducer = createReducer(
       error: action.error
     };
   }),
-  on(ReadingListActions.addToReadingList, (state, action) =>
-    readingListAdapter.addOne({ bookId: action.book.id, ...action.book }, state)
-  ),
-  on(ReadingListActions.removeFromReadingList, (state, action) =>
-    readingListAdapter.removeOne(action.item.bookId, state)
-  )
+  on(ReadingListActions.addToReadingList, (state, action) => {
+    const newState = readingListAdapter.addOne({ bookId: action.book.id, ...action.book }, state);
+    return { ...newState, previousState: state };
+  }),
+
+  on(ReadingListActions.removeFromReadingList, (state, action) => {
+    const newState = readingListAdapter.removeOne(action.item.bookId, state);
+    return { ...newState, previousState: state };
+  }),
+
+  // Implement the logic for undo action
+  on(ReadingListActions.undoAction, state => {
+    if (state.previousState) {
+      return { ...state.previousState, previousState: null };
+    }
+    return state;
+  })
+  // on(ReadingListActions.addToReadingList, (state, action) =>
+  //   readingListAdapter.addOne({ bookId: action.book.id, ...action.book }, state)
+  // ),
+  // // on(ReadingListActions.removeFromReadingList, (state, action) =>
+  // //   readingListAdapter.removeOne(action.item.bookId, state)
+  // // )
+  // on(ReadingListActions.removeFromReadingList, (state, action) => {
+  //   const newState = readingListAdapter.removeOne(action.item.bookId, state);
+  //   return { ...newState, loaded: true };
+  //   console.log(newState)
+  //   console.log(action.item.bookId)
+  //   // Set loaded to true after removing
+  // })
 );
 
 export function reducer(state: State | undefined, action: Action) {
