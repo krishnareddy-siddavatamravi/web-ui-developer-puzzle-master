@@ -13,3 +13,4 @@ export interface ReadingListItem extends Omit<Book, 'id'> {
   finished?: boolean;
   finishedDate?: string;
 }
+

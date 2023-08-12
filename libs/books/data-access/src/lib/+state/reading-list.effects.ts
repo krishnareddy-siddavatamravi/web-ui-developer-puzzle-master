@@ -44,7 +44,8 @@ export class ReadingListEffects implements OnInitEffects {
       concatMap(({ item }) =>
         this.http.delete(`/api/reading-list/${item.bookId}`).pipe(
           map(() =>
-            ReadingListActions.confirmedRemoveFromReadingList({ item })
+            ReadingListActions.confirmedRemoveFromReadingList({ item }),
+            console.log(item,'effect-inside')
           ),
           catchError(() =>
             of(ReadingListActions.failedRemoveFromReadingList({ item }))
