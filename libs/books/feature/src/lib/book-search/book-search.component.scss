@@ -43,11 +43,11 @@ form {
   flex-direction: column;
   font-size: 0.8rem;
 
-  > div {
+  >div {
     margin-bottom: $spacing-xxs;
   }
 
-  > div:last-child {
+  >div:last-child {
     margin: 0;
     flex: 1;
     position: relative;
@@ -69,4 +69,13 @@ form {
   min-height: 50vh;
   font-size: 1.5rem;
   color: $gray40;
+}
+
+.finished-icon {
+  font-size: 1.2rem;
+}
+
+.colored-icon {
+  color: green;
+  /* Change this to your desired color */
 }

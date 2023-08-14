@@ -8,13 +8,12 @@ import {
   getAllBooks,
   ReadingListBook,
   searchBooks,
-  undoAction
+  undoAction,
 } from '@tmo/books/data-access';
 import { FormBuilder } from '@angular/forms';
-import { Book } from '@tmo/shared/models';
+import { Book, ReadingListItem } from '@tmo/shared/models';
 import { debounceTime } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 
 
 @Component({
@@ -25,25 +24,26 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class BookSearchComponent implements OnInit {
   
   books: ReadingListBook[];
+  
 
   searchForm = this.fb.group({
     term: ''
   });
+  searching = false;
+
 
   constructor(
     private readonly store: Store,
     private readonly fb: FormBuilder,
     public snackBar: MatSnackBar,
-    // private Service: SharedService
   ) 
   {
     this.searchForm.controls.term.valueChanges
-      .pipe(debounceTime(500)) // Debounce input changes for 500ms
+      .pipe(debounceTime(500))
       .subscribe(() => {
-        this.searchBooks(); // Trigger search when input changes
+        debounceTime(500);
+        this.searchBooks(); 
       });
-      
-
   }
 
   get searchTerm(): string {
@@ -64,18 +64,12 @@ export class BookSearchComponent implements OnInit {
 
   addBookToReadingList(book: Book) {
     this.store.dispatch(addToReadingList({ book }));
-
-    console.log(book);
-    this.confirmAction('Book added',book)
+    this.confirmAction(`${book.title} Book Removed`,book)
   }
 
   removeFromReadingList(item) {
-
-    console.log(item);
-
     this.store.dispatch(removeFromReadingList({ item }));
- 
-    this.confirmAction('Book removed', item);
+    this.confirmAction(`${item.title} Book Removed`, item);
   }
   
 
@@ -86,40 +80,30 @@ export class BookSearchComponent implements OnInit {
 
   searchBooks() {
     const term = this.searchForm.value.term;
-    
     if (term) {
+      this.searching = true;
       this.store.dispatch(searchBooks({ term }));
     } else {
       this.store.dispatch(clearSearch());
     }
   }
 
-  // searchExample() {
-  //   this.searchForm.controls.term.setValue('javascript');
-  //   this.searchBooks();
-  // }
-
   undo = false;
   confirmAction(msg:string, book:Book){
     this.undo = false;
-    
     let snackBarRef = this.snackBar.open(msg, 'Undo', {
       duration: 3000
     });
 
     snackBarRef.onAction().subscribe(() => {
-      console.log('undo');
       this.undo = true;
-
       this.store.dispatch(undoAction());
       this.snackBar.dismiss();
     });
-
-
   }
 
-
-
- 
+  isFinished(book: ReadingListBook): boolean {
+    return this.books.some(b => b.id === book.id && b.finished);
+  }
 
 }

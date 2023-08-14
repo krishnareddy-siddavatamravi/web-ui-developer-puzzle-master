@@ -11,7 +11,6 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TotalCountComponent } from './total-count/total-count.component';
 import { ReadingListComponent } from './reading-list/reading-list.component';
-import { SharedService } from './sharedservice/shared.service';
 
 const EXPORTS = [
   BookSearchComponent,
@@ -36,7 +35,7 @@ const EXPORTS = [
   ],
   exports: [...EXPORTS],
   declarations: [...EXPORTS],
-  providers:[SharedService]
+  providers:[]
   
 })
 export class BooksFeatureModule {}

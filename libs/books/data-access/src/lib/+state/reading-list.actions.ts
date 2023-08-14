@@ -45,3 +45,24 @@ export const confirmedRemoveFromReadingList = createAction(
 export const undoAction = createAction('[Undo] Perform Undo',
 
 );
+
+export const markAsFinishedConfirmed = createAction(
+  '[Reading List] Mark as Finished Confirmed',
+  props<{ item: ReadingListItem }>()
+);
+
+export const markAsFinished = createAction(
+  '[Reading List] Mark as Finished',
+  props<{ item: ReadingListItem }>()
+);
+
+export const markAsFinishedSuccess = createAction(
+  '[Reading List API] Mark as Finished Success',
+  props<{ item: ReadingListItem }>()
+);
+
+export const markAsFinishedFailure = createAction(
+  '[Reading List API] Mark as Finished Failure',
+  props<{ error: any }>()
+);
+
