@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, InternalServerErrorException, Param, Post,Put } from '@nestjs/common';
 import { Book } from '@tmo/shared/models';
 import { ReadingListService } from './reading-list.service';
 
@@ -20,4 +20,17 @@ export class ReadingListController {
   async removeFromReadingList(@Param() params) {
     return await this.readingList.removeBook(params.id);
   }
+
+  @Put('/reading-list/:id/finished')
+async markAsFinished(@Param('id') id: string) {
+  try {
+    await this.readingList.markBookAsFinished(id);
+
+    return {
+      message: `Marked book with ID ${id} as finished`,
+    };
+  } catch (error) {
+    throw new InternalServerErrorException('Failed to mark book as finished');
+  }
+}
 }

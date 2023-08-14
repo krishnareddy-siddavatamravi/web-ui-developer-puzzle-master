@@ -16,6 +16,7 @@ export class BooksService {
       .get(`https://www.googleapis.com/books/v1/volumes?q=${term}`)
       .pipe(
         map(resp => {
+          console.log('gett api details',resp.data.items)
           return resp.data.items.map(item => {
             return {
               id: item.id,

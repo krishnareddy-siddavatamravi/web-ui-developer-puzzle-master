@@ -41,6 +41,7 @@ const booksReducer = createReducer(
     error
   })),
   on(BooksActions.clearSearch, state => booksAdapter.removeAll(state))
+  
 );
 
 export function reducer(state: State | undefined, action: Action) {

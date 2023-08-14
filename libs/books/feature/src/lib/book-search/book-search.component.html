@@ -2,7 +2,7 @@
   <mat-form-field floatLabel="never">
     <input autoFocus matInput type="search" placeholder="Search for books to add to your reading list"
       formControlName="term" />
-    <button mat-icon-button matSuffix>
+    <button mat-icon-button matSuffix aria-label="Search">
       <mat-icon>search</mat-icon>
     </button>
   </mat-form-field>
@@ -26,9 +26,14 @@
           </div>
           <p [innerHTML]="b.description"></p>
           <div>
-            <button mat-flat-button color="primary" (click)="addBookToReadingList(b)" [disabled]="b.isAdded">
-              Want to Read
-            </button>
+            <div *ngIf="!b.finished; else bFinished">
+              <button mat-flat-button color="primary" (click)="addBookToReadingList(b)" [disabled]="b.isAdded">
+                {{ b.isAdded ? 'Added' : (isFinished(b) ? 'Finished' : 'Want to Read') }}
+                <mat-icon *ngIf="b.isAdded" class="finished-icon">done</mat-icon>
+                <mat-icon *ngIf="isFinished(b) && !b.isAdded" class="finished-icon"
+                  [ngClass]="{'colored-icon': b.finished}">done</mat-icon>
+              </button>
+            </div>
           </div>
         </div>
       </div>

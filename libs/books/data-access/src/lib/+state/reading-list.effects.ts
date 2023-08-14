@@ -45,7 +45,6 @@ export class ReadingListEffects implements OnInitEffects {
         this.http.delete(`/api/reading-list/${item.bookId}`).pipe(
           map(() =>
             ReadingListActions.confirmedRemoveFromReadingList({ item }),
-            console.log(item,'effect-inside')
           ),
           catchError(() =>
             of(ReadingListActions.failedRemoveFromReadingList({ item }))
@@ -54,6 +53,24 @@ export class ReadingListEffects implements OnInitEffects {
       )
     )
   );
+
+  markAsFinished$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(ReadingListActions.markAsFinished),
+    concatMap(({ item }) => {
+      return this.http.put(`/api/reading-list/${item.bookId}/finished`, {}).pipe(
+        map((data) => {
+          return ReadingListActions.markAsFinishedSuccess({ item }),
+          ReadingListActions.markAsFinishedConfirmed({ item }),
+          ReadingListActions.removeFromReadingList({ item });
+        }),
+        catchError(error => {
+          return of(ReadingListActions.markAsFinishedFailure({ error }));
+        })
+      );
+    })
+  )
+);
 
   ngrxOnInitEffects() {
     return ReadingListActions.init();
